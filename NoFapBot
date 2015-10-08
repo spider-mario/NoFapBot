@@ -21,7 +21,7 @@
 
 @Grab('org.pircbotx:pircbotx:2.0.1')
 @Grab('org.slf4j:slf4j-simple:1.7.12')
-import org.pircbotx.PircBotX
+import org.pircbotx.MultiBotManager
 
 @Grab('org.yaml:snakeyaml:1.16')
 import org.yaml.snakeyaml.Yaml
@@ -82,19 +82,23 @@ class Configuration {
 	}
 }
 
-def cli = new CliBuilder(usage: "NoFapBot [options] <configuration file>",
+def cli = new CliBuilder(usage: "NoFapBot [options] <configuration file> [configuration files...]",
                          header: "Options:")
 cli.h(longOpt: 'help', "print this message")
 def options = cli.parse(args)
 
-if (options.h || options.arguments().size() != 1) {
+if (options.h || options.arguments().size() == 0) {
 	cli.usage()
 	return
 }
 
 def yaml = new Yaml(Configuration.yamlConstructor())
 
-def configuration = new File(options.arguments().first()).withInputStream {yaml.load(it)}
+def bots = new MultiBotManager()
 
-def bot = new PircBotX(configuration.ircConfiguration())
-bot.startBot()
+options.arguments().each {configurationFile ->
+	def configuration = new File(configurationFile).withInputStream {yaml.load(it)}
+	bots.addBot(configuration.ircConfiguration())
+}
+
+bots.start()
