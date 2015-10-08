@@ -1,0 +1,104 @@
+#!/usr/bin/env groovy
+
+/*
+	NoFap Bot
+
+	Copyright 2015 spider-mario <spidermario@free.fr>
+
+	This program is free software: you can redistribute it and/or modify
+	it under the terms of the GNU Affero General Public License as
+	published by the Free Software Foundation, either version 3 of the
+	License, or (at your option) any later version.
+
+	This program is distributed in the hope that it will be useful,
+	but WITHOUT ANY WARRANTY; without even the implied warranty of
+	MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+	GNU Affero General Public License for more details.
+
+	You should have received a copy of the GNU Affero General Public License
+	along with this program.  If not, see <http://www.gnu.org/licenses/>.
+*/
+
+@Grab('org.pircbotx:pircbotx:2.0.1')
+import org.pircbotx.PircBotX
+
+@Grab('org.yaml:snakeyaml:1.16')
+import org.yaml.snakeyaml.Yaml
+import org.yaml.snakeyaml.constructor.Constructor
+
+@groovy.transform.CompileStatic
+class Configuration {
+	static class Server {
+		String hostname
+		int port
+		boolean secure
+		String password = ''
+
+		String encoding = 'UTF-8'
+	}
+
+	Server server
+
+	String nick
+	String password = ''
+
+	List<String> channels = []
+
+	org.pircbotx.Configuration ircConfiguration() {
+		def builder = new org.pircbotx.Configuration.Builder()
+
+		builder.setServer(server.hostname, server.port, server.password)
+		if (server.secure) {
+			builder.setSocketFactory(javax.net.ssl.SSLSocketFactory.getDefault())
+		}
+
+		builder.setEncoding(java.nio.charset.Charset.forName(server.encoding))
+
+		builder.setName(nick)
+		if (!password.empty) {
+			builder.setNickservPassword(password)
+		}
+
+		channels.each {channel -> builder.addAutoJoinChannel(channel)}
+
+		builder.setAutoNickChange(true)
+		builder.setAutoReconnect(true)
+
+		builder.setLogin("NoFapBot")
+		builder.setVersion("NoFapBot v0.1")
+
+		return builder.buildConfiguration()
+	}
+
+	static Constructor yamlConstructor() {
+		def constructor = new Constructor(Configuration.class)
+
+		def typeDescription = new org.yaml.snakeyaml.TypeDescription(Configuration.class)
+		typeDescription.putListPropertyType('chans', String.class)
+
+		constructor.addTypeDescription(typeDescription)
+
+		return constructor
+	}
+}
+
+def cli = new CliBuilder(usage: "NoFapBot [options] <configuration file>",
+                         header: "Options:")
+cli.h(longOpt: 'help', "print this message")
+def options = cli.parse(args)
+
+if (options.h || options.arguments().size() != 1) {
+	cli.usage()
+	return
+}
+
+def yaml = new Yaml(Configuration.yamlConstructor())
+
+Configuration configuration
+
+new File(options.arguments().first()).withInputStream {inputStream ->
+	configuration = yaml.load(inputStream)
+}
+
+def bot = new PircBotX(configuration.ircConfiguration())
+bot.startBot()
