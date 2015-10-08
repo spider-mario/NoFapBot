@@ -24,7 +24,6 @@ import org.pircbotx.PircBotX
 
 @Grab('org.yaml:snakeyaml:1.16')
 import org.yaml.snakeyaml.Yaml
-import org.yaml.snakeyaml.constructor.Constructor
 
 @groovy.transform.CompileStatic
 class Configuration {
@@ -44,7 +43,7 @@ class Configuration {
 
 	List<String> channels = []
 
-	org.pircbotx.Configuration ircConfiguration() {
+	def ircConfiguration() {
 		def builder = new org.pircbotx.Configuration.Builder()
 
 		builder.setServer(server.hostname, server.port, server.password)
@@ -70,8 +69,8 @@ class Configuration {
 		return builder.buildConfiguration()
 	}
 
-	static Constructor yamlConstructor() {
-		def constructor = new Constructor(Configuration.class)
+	static def yamlConstructor() {
+		def constructor = new org.yaml.snakeyaml.constructor.Constructor(Configuration.class)
 
 		def typeDescription = new org.yaml.snakeyaml.TypeDescription(Configuration.class)
 		typeDescription.putListPropertyType('chans', String.class)
@@ -94,11 +93,7 @@ if (options.h || options.arguments().size() != 1) {
 
 def yaml = new Yaml(Configuration.yamlConstructor())
 
-Configuration configuration
-
-new File(options.arguments().first()).withInputStream {inputStream ->
-	configuration = yaml.load(inputStream)
-}
+def configuration = new File(options.arguments().first()).withInputStream {yaml.load(it)}
 
 def bot = new PircBotX(configuration.ircConfiguration())
 bot.startBot()
