@@ -59,7 +59,7 @@ class Configuration {
 			builder.setNickservPassword(password)
 		}
 
-		channels.each {channel -> builder.addAutoJoinChannel(channel)}
+		channels.each {builder.addAutoJoinChannel(it)}
 
 		builder.setAutoNickChange(true)
 		builder.setAutoReconnect(true)
