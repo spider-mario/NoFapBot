@@ -71,10 +71,10 @@ class Configuration {
 	}
 
 	static def yamlConstructor() {
-		def constructor = new org.yaml.snakeyaml.constructor.Constructor(Configuration.class)
+		def constructor = new org.yaml.snakeyaml.constructor.Constructor(Configuration)
 
-		def typeDescription = new org.yaml.snakeyaml.TypeDescription(Configuration.class)
-		typeDescription.putListPropertyType('chans', String.class)
+		def typeDescription = new org.yaml.snakeyaml.TypeDescription(Configuration)
+		typeDescription.putListPropertyType('chans', String)
 
 		constructor.addTypeDescription(typeDescription)
 
