@@ -44,7 +44,7 @@ class Configuration {
 
 	List<String> channels = []
 
-	def ircConfiguration() {
+	def getIrcConfiguration() {
 		def builder = new org.pircbotx.Configuration.Builder()
 
 		builder.setServer(server.hostname, server.port, server.password)
@@ -70,7 +70,7 @@ class Configuration {
 		return builder.buildConfiguration()
 	}
 
-	static def yamlConstructor() {
+	static def getYamlConstructor() {
 		def constructor = new org.yaml.snakeyaml.constructor.Constructor(Configuration)
 
 		def typeDescription = new org.yaml.snakeyaml.TypeDescription(Configuration)
@@ -92,13 +92,13 @@ if (options.h || options.arguments().size() == 0) {
 	return
 }
 
-def yaml = new Yaml(Configuration.yamlConstructor())
+def yaml = new Yaml(Configuration.yamlConstructor)
 
 def bots = new MultiBotManager()
 
 options.arguments().each {configurationFile ->
 	def configuration = new File(configurationFile).withInputStream {yaml.load(it)}
-	bots.addBot(configuration.ircConfiguration())
+	bots.addBot(configuration.ircConfiguration)
 }
 
 bots.start()
