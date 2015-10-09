@@ -49,23 +49,23 @@ class Configuration {
 
 		builder.setServer(server.hostname, server.port, server.password)
 		if (server.secure) {
-			builder.setSocketFactory(javax.net.ssl.SSLSocketFactory.getDefault())
+			builder.socketFactory = javax.net.ssl.SSLSocketFactory.default
 		}
 
-		builder.setEncoding(java.nio.charset.Charset.forName(server.encoding))
+		builder.encoding = java.nio.charset.Charset.forName(server.encoding)
 
-		builder.setName(nick)
+		builder.name = nick
 		if (!password.empty) {
-			builder.setNickservPassword(password)
+			builder.nickservPassword = password
 		}
 
 		channels.each {builder.addAutoJoinChannel(it)}
 
-		builder.setAutoNickChange(true)
-		builder.setAutoReconnect(true)
+		builder.autoNickChange = true
+		builder.autoReconnect  = true
 
-		builder.setLogin("NoFapBot")
-		builder.setVersion("NoFapBot v0.1")
+		builder.login = "NoFapBot"
+		builder.version = "NoFapBot v0.1"
 
 		return builder.buildConfiguration()
 	}
