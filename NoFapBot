@@ -27,9 +27,10 @@ import org.pircbotx.hooks.events.*
 @Grab('org.mapdb:mapdb:2.0-beta8')
 import org.mapdb.DBMaker
 
-@Grab('joda-time:joda-time:2.8.2')
-import org.joda.time.DateTime
-import org.joda.time.Period
+@Grab('org.ocpsoft.prettytime:prettytime:4.0.0.Final')
+@Grab('org.ocpsoft.prettytime:prettytime-nlp:4.0.0.Final')
+import org.ocpsoft.prettytime.PrettyTime
+import org.ocpsoft.prettytime.nlp.PrettyTimeParser
 
 @Grab('org.yaml:snakeyaml:1.16')
 import org.yaml.snakeyaml.Yaml
@@ -37,6 +38,9 @@ import org.yaml.snakeyaml.Yaml
 class IrcBot extends org.pircbotx.hooks.ListenerAdapter {
 	// TODO make it persistent
 	final def startDates = DBMaker.tempTreeMap()
+
+	final def prettyTime = new PrettyTime(Locale.ENGLISH)
+	final def timeParser = new PrettyTimeParser()
 
 	final def commands = [
 		help: [
@@ -77,21 +81,15 @@ class IrcBot extends org.pircbotx.hooks.ListenerAdapter {
 					return
 				}
 
-				def date
-				try {
-					date = DateTime.parse(args)
-				}
-				catch (IllegalArgumentException ignored) {
-					e.respond(
-						"Sorry, I did not understand your start date. " +
-						"The dates I understand look like this: ${DateTime.now()}"
-					)
+				def dates = timeParser.parse(args)
+				if (!dates) {
+					e.respond("Sorry, I did not understand your start date.")
 					return
 				}
 
-				startDates.put(e.user.nick, date)
+				startDates.put(e.user.nick, dates[0])
 
-				e.respond("Recorded $date.")
+				e.respond("Recorded ${dates[0]}.")
 			}
 		],
 
@@ -103,7 +101,7 @@ class IrcBot extends org.pircbotx.hooks.ListenerAdapter {
 					return
 				}
 
-				commands.set.run(e, DateTime.now().toString())
+				commands.set.run(e, "now")
 			}
 		],
 
@@ -118,8 +116,7 @@ class IrcBot extends org.pircbotx.hooks.ListenerAdapter {
 				def startDate = startDates.get(e.user.nick)
 
 				if (startDate) {
-					// TODO the way periods are currently printed sucks
-					e.respond("You have been winning for ${new Period(startDate, DateTime.now())}.")
+					e.respond("Your streak started ${prettyTime.format(startDate)}.")
 				}
 				else {
 					e.respond("I do not know you. Sorry.")
