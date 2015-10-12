@@ -36,8 +36,13 @@ import org.ocpsoft.prettytime.nlp.PrettyTimeParser
 import org.yaml.snakeyaml.Yaml
 
 class IrcBot extends org.pircbotx.hooks.ListenerAdapter {
-	// TODO make it persistent
-	final def startDates = DBMaker.tempTreeMap()
+	final def database
+	final def startDates
+
+	IrcBot(File dbFile) {
+		database = DBMaker.fileDB(dbFile).closeOnJvmShutdown().make()
+		startDates = database.treeMap("NoFap")
+	}
 
 	final def prettyTime = new PrettyTime(Locale.ENGLISH)
 	final def timeParser = new PrettyTimeParser()
@@ -88,6 +93,7 @@ class IrcBot extends org.pircbotx.hooks.ListenerAdapter {
 				}
 
 				startDates.put(e.user.nick, dates[0])
+				database.commit()
 
 				e.respond("Recorded ${dates[0]}.")
 			}
@@ -178,6 +184,8 @@ class Configuration {
 
 	List<String> channels = []
 
+	File databaseFile
+
 	def getIrcConfiguration() {
 		def builder = new org.pircbotx.Configuration.Builder()
 
@@ -201,7 +209,7 @@ class Configuration {
 		builder.login = "NoFapBot"
 		builder.version = "NoFapBot v0.1"
 
-		builder.addListener(new IrcBot())
+		builder.addListener(new IrcBot(databaseFile))
 
 		return builder.buildConfiguration()
 	}
