@@ -24,6 +24,8 @@ another way to make them available to `the Grape dependency manager`_).
 Configuration files
 ====================
 
-To know what servers to connect to, the bot uses YAML configuration files. You
+To know what servers to connect to, the bot uses YAML_ configuration files. You
 can use the provided example, ``freenode.cfg``, as a starting point for your own
 configuration files.
+
+.. _YAML: http://yaml.org/
