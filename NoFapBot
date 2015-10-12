@@ -129,6 +129,23 @@ class IrcBot extends org.pircbotx.hooks.ListenerAdapter {
 				}
 			}
 		],
+
+		forget: [
+			usage: ["forget: remove your data from the database"],
+			run: {e, args ->
+				if (args) {
+					e.respond("This command does not take any argument.")
+					return
+				}
+
+				def nick = e.user.nick
+
+				startDates.remove(nick)
+				database.commit()
+
+				e.respond("$nick? $nick who?")
+			}
+		],
 	]
 
 	def handleMessageEvent(event, body) {
