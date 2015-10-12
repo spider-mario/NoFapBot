@@ -73,7 +73,7 @@ class IrcBot extends org.pircbotx.hooks.ListenerAdapter {
 			run: {e, args ->
 				e.respond(
 					"NoFapBot is an IRC bot to help you measure your NoFap streaks. " +
-					"It is free and open source: <TODO insert repo URL here>"
+					"It is free and open source: https://github.com/spider-mario/NoFapBot"
 				)
 			}
 		],
