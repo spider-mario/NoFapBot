@@ -33,7 +33,10 @@ class IrcBot extends org.pircbotx.hooks.ListenerAdapter {
 			usage: ["help: show all available commands", "help COMMAND: show how to use a particular command"],
 			run: {e, args ->
 				if (args.empty) {
-					e.respond("Available commands: ${commands.keySet().join(', ')}. Use `help COMMAND` to see how to use one in particular.")
+					e.respond(
+						"Available commands: ${commands.keySet().join(', ')}. " +
+						"Use `help COMMAND` to see how to use one in particular."
+					)
 				}
 				else {
 					if (commands.containsKey(args)) {
@@ -49,7 +52,10 @@ class IrcBot extends org.pircbotx.hooks.ListenerAdapter {
 		about: [
 			usage: ["about: show information about NoFapBot itself"],
 			run: {e, args ->
-				e.respond("NoFapBot is an IRC bot to help you measure your NoFap streaks. It is free and open source: <TODO insert repo URL here>")
+				e.respond(
+					"NoFapBot is an IRC bot to help you measure your NoFap streaks. " +
+					"It is free and open source: <TODO insert repo URL here>"
+				)
 			}
 		],
 	]
