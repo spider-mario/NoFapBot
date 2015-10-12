@@ -24,11 +24,21 @@
 import org.pircbotx.MultiBotManager
 import org.pircbotx.hooks.events.*
 
+@Grab('org.mapdb:mapdb:2.0-beta8')
+import org.mapdb.DBMaker
+
+@Grab('joda-time:joda-time:2.8.2')
+import org.joda.time.DateTime
+import org.joda.time.Period
+
 @Grab('org.yaml:snakeyaml:1.16')
 import org.yaml.snakeyaml.Yaml
 
 class IrcBot extends org.pircbotx.hooks.ListenerAdapter {
-	static final def commands = [
+	// TODO make it persistent
+	final def startDates = DBMaker.tempTreeMap()
+
+	final def commands = [
 		help: [
 			usage: ["help: show all available commands", "help COMMAND: show how to use a particular command"],
 			run: {e, args ->
@@ -56,6 +66,64 @@ class IrcBot extends org.pircbotx.hooks.ListenerAdapter {
 					"NoFapBot is an IRC bot to help you measure your NoFap streaks. " +
 					"It is free and open source: <TODO insert repo URL here>"
 				)
+			}
+		],
+
+		set: [
+			usage: ["set DATE: indicate when the streak started"],
+			run: {e, args ->
+				if (args.empty) {
+					e.respond("You did not indicate a date. If you wish to use the current date, use `reset`.")
+					return
+				}
+
+				def date
+				try {
+					date = DateTime.parse(args)
+				}
+				catch (IllegalArgumentException ignored) {
+					e.respond(
+						"Sorry, I did not understand your start date. " +
+						"The dates I understand look like this: ${DateTime.now()}"
+					)
+					return
+				}
+
+				startDates.put(e.user.nick, date)
+
+				e.respond("Recorded $date.")
+			}
+		],
+
+		reset: [
+			usage: ["reset: indicate that the streak has just started"],
+			run: {e, args ->
+				if (args) {
+					e.respond("This command does not take any argument.")
+					return
+				}
+
+				commands.set.run(e, DateTime.now().toString())
+			}
+		],
+
+		get: [
+			usage: ["get: see your streak"],
+			run: {e, args ->
+				if (args) {
+					e.respond("This command does not take any argument.")
+					return
+				}
+
+				def startDate = startDates.get(e.user.nick)
+
+				if (startDate) {
+					// TODO the way periods are currently printed sucks
+					e.respond("You have been winning for ${new Period(startDate, DateTime.now())}.")
+				}
+				else {
+					e.respond("I do not know you. Sorry.")
+				}
 			}
 		],
 	]
