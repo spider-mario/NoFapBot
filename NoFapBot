@@ -122,7 +122,7 @@ class IrcBot extends org.pircbotx.hooks.ListenerAdapter {
 				def startDate = startDates.get(e.user.nick)
 
 				if (startDate) {
-					e.respond("Your streak started ${prettyTime.format(startDate)}.")
+					e.respond("Your streak started ${prettyTime.format(startDate)} ($startDate).")
 				}
 				else {
 					e.respond("I do not know you. Sorry.")
