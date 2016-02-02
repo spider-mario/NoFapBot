@@ -146,6 +146,25 @@ class IrcBot extends org.pircbotx.hooks.ListenerAdapter {
 				e.respond("$nick? $nick who?")
 			}
 		],
+
+		emergency: [
+			usage: ["emergency: in case of a NoFap emergency"],
+			run: {e, args ->
+				if (args) {
+					e.respond("This command does not take any argument.")
+					return
+				}
+
+				e.respond("http://emergency.nofap.com/")
+			}
+		],
+
+		'911': [
+			usage: ["911: in case of a NoFap emergency"],
+			run: {e, args ->
+				commands.emergency.run(e, args)
+			}
+		]
 	]
 
 	def handleMessageEvent(event, body) {
