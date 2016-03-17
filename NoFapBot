@@ -19,7 +19,7 @@
 	along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-@Grab('org.pircbotx:pircbotx:2.0.1')
+@Grab('org.pircbotx:pircbotx:2.1')
 @Grab('org.slf4j:slf4j-simple:1.7.12')
 import org.pircbotx.MultiBotManager
 import org.pircbotx.hooks.events.*
@@ -229,7 +229,8 @@ class Configuration {
 	def getIrcConfiguration() {
 		def builder = new org.pircbotx.Configuration.Builder()
 
-		builder.setServer(server.hostname, server.port, server.password)
+		builder.addServer(server.hostname, server.port)
+		builder.serverPassword = server.password
 		if (server.secure) {
 			builder.socketFactory = javax.net.ssl.SSLSocketFactory.default
 		}
