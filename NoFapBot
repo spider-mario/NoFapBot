@@ -20,7 +20,7 @@
 */
 
 @Grab('org.pircbotx:pircbotx:2.1')
-@Grab('org.slf4j:slf4j-simple:1.7.12')
+@Grab('org.slf4j:slf4j-simple:1.7.21')
 import org.pircbotx.MultiBotManager
 import org.pircbotx.hooks.events.*
 
@@ -32,7 +32,7 @@ import org.mapdb.DBMaker
 import org.ocpsoft.prettytime.PrettyTime
 import org.ocpsoft.prettytime.nlp.PrettyTimeParser
 
-@Grab('org.yaml:snakeyaml:1.16')
+@Grab('org.yaml:snakeyaml:1.17')
 import org.yaml.snakeyaml.Yaml
 
 class IrcBot extends org.pircbotx.hooks.ListenerAdapter {
