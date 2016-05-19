@@ -159,7 +159,7 @@ class IrcBot extends org.pircbotx.hooks.ListenerAdapter {
 					return
 				}
 
-				e.respond("http://emergency.nofap.com/")
+				e.respond("https://emergency.nofap.com/")
 			}
 		],
 
