@@ -197,7 +197,7 @@ class IrcBot extends org.pircbotx.hooks.ListenerAdapter {
 				break
 
 			case MessageEvent:
-				def matcher = (event.message =~ /\Q${event.bot.nick}\E\s*:?\s*(?<body>.*?)\s*$/)
+				def matcher = (event.message =~ /\Q${event.bot.nick}\E\s*[:,]?\s*(?<body>.*?)\s*$/)
 				if (matcher.matches()) {
 					handleMessageEvent(event, matcher.group('body'))
 				}
