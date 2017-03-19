@@ -20,11 +20,11 @@
 */
 
 @Grab('org.pircbotx:pircbotx:2.1')
-@Grab('org.slf4j:slf4j-simple:1.7.21')
+@Grab('org.slf4j:slf4j-simple:1.7.25')
 import org.pircbotx.MultiBotManager
 import org.pircbotx.hooks.events.*
 
-@Grab('org.mapdb:mapdb:2.0-beta8')
+@Grab('org.mapdb:mapdb:3.0.3')
 import org.mapdb.DBMaker
 
 @Grab('org.ocpsoft.prettytime:prettytime:4.0.1.Final')
@@ -32,7 +32,7 @@ import org.mapdb.DBMaker
 import org.ocpsoft.prettytime.PrettyTime
 import org.ocpsoft.prettytime.nlp.PrettyTimeParser
 
-@Grab('org.yaml:snakeyaml:1.17')
+@Grab('org.yaml:snakeyaml:1.18')
 import org.yaml.snakeyaml.Yaml
 
 class IrcBot extends org.pircbotx.hooks.ListenerAdapter {
@@ -41,7 +41,7 @@ class IrcBot extends org.pircbotx.hooks.ListenerAdapter {
 
 	IrcBot(File dbFile) {
 		database = DBMaker.fileDB(dbFile).closeOnJvmShutdown().make()
-		startDates = database.treeMap("NoFap")
+		startDates = database.treeMap("NoFap").createOrOpen()
 	}
 
 	def prettyTime() {
