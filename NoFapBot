@@ -24,7 +24,7 @@
 import org.pircbotx.MultiBotManager
 import org.pircbotx.hooks.events.*
 
-@Grab('org.mapdb:mapdb:3.0.3')
+@Grab('org.mapdb:mapdb:3.0.5')
 import org.mapdb.DBMaker
 
 @Grab('org.ocpsoft.prettytime:prettytime:4.0.1.Final')
